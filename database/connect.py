@@ -1,7 +1,9 @@
 from pydantic import PostgresDsn
 
 from models.note import Note
+
 from models.profile import Profile
+
 
 from sqlmodel import create_engine, SQLModel
 
