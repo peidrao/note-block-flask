@@ -54,6 +54,7 @@ python = "^3.8"
 flask = "^2.2.2"
 sqlmodel = "^0.0.8"
 psycopg2 = "^2.9.5"
+flask-restful = "^0.3.9"
 
 
 [tool.poetry.group.dev.dependencies]
