@@ -27,7 +27,9 @@ exclude = [
     "node_modules",
     "venv",
 ]
+
 per-file-ignores = {}
+
 
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
@@ -38,10 +40,6 @@ target-version = "py310"
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
 
-[tool.ruff.per-file-ignores]
-"database/connect.py" = ["F401"]
-
-
 [tool.poetry]
 name = "note-block-flask"
 version = "0.1.0"
@@ -49,6 +47,7 @@ description = ""
 authors = ["Pedro Fonseca <contatopedrorn@gmail.com>"]
 readme = "README.md"
 packages = [{include = "note_block_flask"}]
+
 
 [tool.poetry.dependencies]
 python = "^3.8"
@@ -61,6 +60,7 @@ psycopg2 = "^2.9.5"
 pre-commit = "^2.21.0"
 ruff = "^0.0.207"
 pytest = "^7.2.0"
+python-dotenv = "^0.21.0"
 
 [build-system]
 requires = ["poetry-core"]
