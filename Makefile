@@ -1,2 +1,2 @@
 run:
-	poetry run python3 app.py
+	poetry run python3 src/app.py
