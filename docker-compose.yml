@@ -2,18 +2,20 @@ version: "3.5"
 
 services:
   postgres:
-    container_name: flask_note
-    image: postgres:latest
+    container_name: flask_db
+    image: postgres
     environment:
-      POSTGRES_USER: flask
-      POSTGRES_PASSWORD: flask@notes#
-      POSTGRES_DB: flask_note
-      PGDATA: /data/postgres
+      POSTGRES_USER: "flask"
+      POSTGRES_PASSWORD: "flask"
+      POSTGRES_DB: "flask_db"
     volumes:
-      - postgres-db:/data/postgres
+      - postgres:/data/postgres
     ports:
       - "5434:5432"
 
+networks:
+  postgres:
+    driver: bridge
+
 volumes:
-  postgres-db:
-    driver: local
+  postgres:
