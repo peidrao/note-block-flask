@@ -4,7 +4,7 @@ from flask_restful import Resource, Api
 from dotenv import dotenv_values
 from database.connect import create_db_and_tables
 from utils.constants import HTTP_200_ACCEPTED
-from services.profile import ProfileListView
+from services.profile import ProfileDetailsView, ProfileListView
 
 config = dotenv_values(".env")
 
@@ -27,6 +27,7 @@ class HelloWorld(Resource):
 
 api.add_resource(HelloWorld, '/')
 api.add_resource(ProfileListView, '/profile')
+api.add_resource(ProfileDetailsView, '/profile/<int:profile_id>')
 
 if __name__ == '__main__':
     app.run(host=config.get('HOST'), port=8080, debug=config.get('DEBUG'))
