@@ -6,6 +6,7 @@ from flask import request
 from database.connect import engine
 from models import Note, Profile
 from schemas import NoteSchema
+from utils.auth import token_required
 from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY)
 
@@ -42,7 +43,9 @@ class NoteListView(Resource):
 
 
 class ProfileMeNotes(Resource):
-    def get(self, profile_id):
-        with Session(engine) as session:
-            notes = session.exec(select(Note).where(Note.profile_id == profile_id))
-            return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED
+    @token_required
+    def get(self):
+        pass
+        # with Session(engine) as session:
+            # notes = session.exec(select(Note).where(Note.profile_id == profile_id))
+            # return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED
