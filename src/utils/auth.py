@@ -17,18 +17,20 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization']
+            token = token.split(' ')[1]
         if not token:
             return {'message': 'Token is missing'}, HTTP_401_UNAUTHORIZED
 
         try:
-            data = jwt.decode(token, config.get("SECRET_KEY"))
+            data = jwt.decode(token, config.get("SECRET_KEY"), "HS256")
             with Session(engine) as session:
-                profile = session.get(Profile, data['id'])
+                profile = session.get(Profile, data['profile_id'])
+
         except jwt.exceptions.DecodeError:
             return jsonify({'message': 'Token is invalid'}), HTTP_401_UNAUTHORIZED
-
+        # import pdb; pdb.set_trace()
         return f(profile, *args, **kwargs)
 
     return decorated
