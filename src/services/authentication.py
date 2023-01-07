@@ -77,7 +77,7 @@ class ProfileLoginView(Resource):
                     token = jwt.encode({
                         'profile_id': profile.id,
                         'exp' : datetime.utcnow() + timedelta(minutes = 30)
-                    }, config.get('SECRET_KEY'))
+                    }, config.get('SECRET_KEY'), 'HS256')
                     return {'token': token}, HTTP_200_ACCEPTED
 
                 return {'message': 'passwords do not match'}, HTTP_403_FORBIDDEN

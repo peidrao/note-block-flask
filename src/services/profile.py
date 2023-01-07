@@ -6,6 +6,7 @@ from flask import request
 from database.connect import engine
 from models.profile import Profile
 from schemas.profile import ProfileSchema
+from utils.auth import token_required
 from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED, HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST, HTTP_422_UNPROCESSABLE_ENTITY)
 
@@ -29,8 +30,8 @@ class ProfileListView(Resource):
             result = ProfileSchema().dump(session.get(Profile, profile.id))
             return {'message': result}, HTTP_201_CREATED
 
-
-    def get(self):
+    @token_required
+    def get(self, request):
         with Session(engine) as session:
             profiles = session.exec(select(Profile)).all()
             return ProfileSchema(many=True).dump(profiles)
@@ -66,4 +67,13 @@ class ProfileDetailsView(Resource):
             profile.name = name
             session.commit()
             result = ProfileSchema().dump(session.get(Profile, profile_id))
+            return result, HTTP_200_ACCEPTED
+
+
+class ProfileMeView(Resource):
+
+    @token_required
+    def get(self, _):
+         with Session(engine) as session:
+            result = ProfileSchema().dump(session.get(Profile, self.id))
             return result, HTTP_200_ACCEPTED
