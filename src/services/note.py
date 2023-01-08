@@ -46,6 +46,7 @@ class ProfileMeNotes(Resource):
     @token_required
     def get(self):
         pass
+
         # with Session(engine) as session:
             # notes = session.exec(select(Note).where(Note.profile_id == profile_id))
             # return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED
