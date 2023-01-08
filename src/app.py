@@ -41,7 +41,7 @@ api.add_resource(ProfileListView, '/profile')
 api.add_resource(ProfileDetailsView, '/profile/<int:profile_id>')
 
 api.add_resource(NoteListView, '/notes')
-api.add_resource(ProfileMeNotes, '/notes/me/')
+api.add_resource(ProfileMeNotes, '/me/notes/')
 
 
 if __name__ == '__main__':

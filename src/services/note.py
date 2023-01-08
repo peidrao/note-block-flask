@@ -12,7 +12,8 @@ from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED,
 
 
 class NoteListView(Resource):
-    def post(self):
+    @token_required
+    def post(self, _):
         json_data = request.get_json()
         if not json_data:
             return {'message': 'No payload'}, HTTP_400_BAD_REQUEST
@@ -22,10 +23,10 @@ class NoteListView(Resource):
         except ValidationError as err:
             return err.messages, HTTP_422_UNPROCESSABLE_ENTITY
 
-        text, profile_id = data['text'], data['profile_id']
+        text= data['text']
         with Session(engine) as session:
 
-            profile = session.get(Profile, profile_id)
+            profile = session.get(Profile, self.id)
             if profile:
                 note = Note(text=text, profile_id=profile.id)
                 session.add(note)
@@ -41,12 +42,9 @@ class NoteListView(Resource):
             return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED
 
 
-
 class ProfileMeNotes(Resource):
     @token_required
-    def get(self):
-        pass
-
-        # with Session(engine) as session:
-            # notes = session.exec(select(Note).where(Note.profile_id == profile_id))
-            # return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED
+    def get(self, request):
+        with Session(engine) as session:
+            notes = session.exec(select(Note).where(Note.profile_id == self.id))
+            return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED

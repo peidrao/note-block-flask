@@ -1,14 +1,13 @@
 from sqlmodel import Session
 from models import Profile
-from flask import jsonify, request
+from flask import request
 import jwt
 from functools import wraps
 from database.connect import engine
 
 from dotenv import dotenv_values
-from werkzeug.security import generate_password_hash, check_password_hash
 
-from utils.constants import HTTP_401_UNAUTHORIZED
+from utils.constants import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
 config = dotenv_values(".env")
 
@@ -28,9 +27,10 @@ def token_required(f):
             with Session(engine) as session:
                 profile = session.get(Profile, data['profile_id'])
 
-        except jwt.exceptions.DecodeError:
-            return jsonify({'message': 'Token is invalid'}), HTTP_401_UNAUTHORIZED
-        # import pdb; pdb.set_trace()
+        except (
+            jwt.exceptions.DecodeError,
+            jwt.exceptions.ExpiredSignatureError) as error:
+            return {'message': error.args[0]}, HTTP_400_BAD_REQUEST
         return f(profile, *args, **kwargs)
 
     return decorated
