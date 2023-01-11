@@ -3,7 +3,7 @@ from marshmallow import ValidationError
 from sqlmodel import Session, select
 from flask import request
 
-from database.connect import engine
+from database import engine
 from models import Note, Profile
 from schemas import NoteSchema
 from utils.auth import token_required
