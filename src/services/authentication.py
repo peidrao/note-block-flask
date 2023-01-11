@@ -1,16 +1,17 @@
-from datetime import datetime, timedelta
-from flask_restful import Resource
-
 import jwt
-from dotenv import dotenv_values
 
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta
 from marshmallow import ValidationError
 from sqlmodel import Session, select
-from database.connect import engine
+from flask_restful import Resource
 from flask import request
-from models.profile import Profile
-from schemas.profile import ProfileSchema, ProfileLoginSchema
-from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import dotenv_values
+
+
+from database import engine
+from models import Profile
+from schemas import ProfileSchema, ProfileLoginSchema
 
 from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND,
@@ -31,7 +32,7 @@ class ProfileSignupView(Resource):
         except ValidationError as err:
             return err.messages, HTTP_422_UNPROCESSABLE_ENTITY
 
-        name, = data['name']
+        name = data['name']
         username, email, password = data['username'], data['email'], data['password']
 
         with Session(engine) as session:

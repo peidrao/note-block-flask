@@ -1,12 +1,12 @@
-from sqlmodel import Session
-from models import Profile
-from flask import request
 import jwt
-from functools import wraps
-from database.connect import engine
 
+from sqlmodel import Session
+from functools import wraps
+from flask import request
 from dotenv import dotenv_values
 
+from models import Profile
+from database.connect import engine
 from utils.constants import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
 config = dotenv_values(".env")
