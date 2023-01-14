@@ -1,17 +1,16 @@
-from dotenv import dotenv_values
 from pydantic import PostgresDsn
 from sqlmodel import create_engine, SQLModel
-
-config = dotenv_values(".env")
+from config import config
 
 
 DATABASE_URI: str = PostgresDsn.build(
     scheme='postgresql+psycopg2',
     path='/flask_db',
-    user=config.get('DATABASE_USER'),
-    password=config.get('DATABASE_PASS'),
-    host=config.get('HOST'),
-    port=config.get('DATABASE_PORT'))
+    user=config.DATABASE_USER,
+    password=config.DATABASE_PASSWORD,
+    host=config.HOST,
+    port=config.DATABASE_PORT)
+
 
 engine = create_engine(DATABASE_URI, echo=True)
 
