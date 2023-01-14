@@ -3,7 +3,6 @@ from dotenv import dotenv_values
 config = dotenv_values(".env")
 
 
-
 class Config(object):
     DEBUG = True
     SECRET_KEY = config.get('SECRET_KEY')
