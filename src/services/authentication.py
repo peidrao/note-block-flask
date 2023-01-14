@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from marshmallow import ValidationError
 from sqlmodel import Session, select
-from flask_restful import Resource
+from flask.views import MethodView
 from flask import request
 from dotenv import dotenv_values
 
@@ -21,7 +21,7 @@ from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED,
 config = dotenv_values(".env")
 
 
-class ProfileSignupView(Resource):
+class ProfileSignupView(MethodView):
     def post(self):
         json_data = request.get_json()
         if not json_data:
@@ -55,7 +55,7 @@ class ProfileSignupView(Resource):
             return {'message': result}, HTTP_201_CREATED
 
 
-class ProfileLoginView(Resource):
+class ProfileLoginView(MethodView):
 
     def post(self):
         json_data = request.get_json()
