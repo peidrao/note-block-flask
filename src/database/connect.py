@@ -1,6 +1,6 @@
 from pydantic import PostgresDsn
 from sqlmodel import create_engine, SQLModel
-from config import config
+from src.config import config
 
 
 DATABASE_URI: str = PostgresDsn.build(

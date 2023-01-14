@@ -1,4 +1,5 @@
-from flask_restful import Resource
+from flask.views import MethodView
+
 from marshmallow import ValidationError
 from sqlmodel import Session, select
 from flask import request
@@ -11,7 +12,7 @@ from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED, HTTP_204_NO_CO
     HTTP_400_BAD_REQUEST, HTTP_422_UNPROCESSABLE_ENTITY)
 
 
-class ProfileListView(Resource):
+class ProfileListView(MethodView):
     def post(self):
         json_data = request.get_json()
         if not json_data:
@@ -37,7 +38,7 @@ class ProfileListView(Resource):
             return ProfileSchema(many=True).dump(profiles)
 
 
-class ProfileDetailsView(Resource):
+class ProfileDetailsView(MethodView):
 
     def get(self, profile_id):
         with Session(engine) as session:
@@ -70,8 +71,7 @@ class ProfileDetailsView(Resource):
             return result, HTTP_200_ACCEPTED
 
 
-class ProfileMeView(Resource):
-
+class ProfileMeView(MethodView):
     @token_required
     def get(self, _):
          with Session(engine) as session:

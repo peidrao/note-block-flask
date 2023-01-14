@@ -1,7 +1,8 @@
-from flask_restful import Resource
+# from flask_restful import Resource
 from marshmallow import ValidationError
 from sqlmodel import Session, select
 from flask import request
+from flask.views import MethodView
 
 from database.connect import engine
 from models import Note, Profile
@@ -11,7 +12,7 @@ from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY)
 
 
-class NoteListView(Resource):
+class NoteListView(MethodView):
     @token_required
     def post(self, _):
         json_data = request.get_json()
@@ -42,7 +43,7 @@ class NoteListView(Resource):
             return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED
 
 
-class ProfileMeNotes(Resource):
+class ProfileMeNotes(MethodView):
     @token_required
     def get(self, request):
         with Session(engine) as session:
