@@ -2,10 +2,10 @@
 # 	poetry run python3 src/app.py
 
 run:
-	python3 -m src.app
+	python3 -m manage
 
 test:
-	python3 -m pytest src
+	python3 -m pytest
 
 celery:
-	celery -A app.celery worker --loglevel=DEBUG
+	celery -A src.server.celeryu worker --loglevel=DEBUG
