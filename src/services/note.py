@@ -3,9 +3,9 @@ from marshmallow import ValidationError
 from sqlmodel import Session, select
 from flask import request
 
-from database import engine
+from database.connect import engine
 from models import Note, Profile
-from schemas import NoteSchema
+from schemas.note import NoteSchema
 from utils.auth import token_required
 from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY)

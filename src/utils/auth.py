@@ -5,7 +5,7 @@ from functools import wraps
 from flask import request
 from dotenv import dotenv_values
 
-from models import Profile
+from models.profile import Profile
 from database.connect import engine
 from utils.constants import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
