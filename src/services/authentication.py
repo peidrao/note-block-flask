@@ -9,9 +9,9 @@ from flask import request
 from dotenv import dotenv_values
 
 
-from database import engine
-from models import Profile
-from schemas import ProfileSchema, ProfileLoginSchema
+from database.connect import engine
+from models.profile import Profile
+from schemas.profile import ProfileSchema, ProfileLoginSchema
 
 from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND,
