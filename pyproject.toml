@@ -3,7 +3,7 @@ line-length = 88
 
 # Enable Pyflakes `E` and `F` codes by default.
 select = ["E", "F"]
-ignore = ["F401"]
+ignore = ["F401", "E402"]
 
 # Exclude a variety of commonly ignored directories.
 exclude = [

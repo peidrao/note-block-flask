@@ -4,11 +4,12 @@ from sqlmodel import Session, select
 from flask import request
 from flask.views import MethodView
 
-from database.connect import engine
-from models import Note, Profile
-from schemas.note import NoteSchema
-from utils.auth import token_required
-from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED,
+from src.database.connect import engine
+from src.models import Note, Profile
+from src.schemas.note import NoteSchema
+from src.utils.auth import token_required
+from src.utils.constants import (
+    HTTP_200_ACCEPTED, HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY)
 
 
@@ -24,7 +25,8 @@ class NoteListView(MethodView):
         except ValidationError as err:
             return err.messages, HTTP_422_UNPROCESSABLE_ENTITY
 
-        text= data['text']
+        text = data['text']
+
         with Session(engine) as session:
 
             profile = session.get(Profile, self.id)
@@ -35,7 +37,6 @@ class NoteListView(MethodView):
                 return NoteSchema().dump(session.get(Note, note.id)), HTTP_201_CREATED
 
             return {'message': 'Profile not found'}, HTTP_404_NOT_FOUND
-
 
     def get(self):
         with Session(engine) as session:

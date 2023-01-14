@@ -1,19 +1,12 @@
-from pydantic import PostgresDsn
 from sqlmodel import create_engine, SQLModel
 from src.server.config import config
 
-
-DATABASE_URI: str = PostgresDsn.build(
-    scheme='postgresql+psycopg2',
-    path='/flask_db',
-    user=config.DATABASE_USER,
-    password=config.DATABASE_PASSWORD,
-    host=config.HOST,
-    port=config.DATABASE_PORT)
-
-
-engine = create_engine(DATABASE_URI, echo=True)
+engine = create_engine(config.SQLALCHEMY_DATABASE_URI, echo=True)
 
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
+
+
+def drop_db_and_tables():
+    SQLModel.metadata.drop_all(engine)

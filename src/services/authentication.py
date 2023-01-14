@@ -9,13 +9,14 @@ from flask import request
 from dotenv import dotenv_values
 
 
-from database.connect import engine
-from models.profile import Profile
-from schemas.profile import ProfileSchema, ProfileLoginSchema
+from src.database.connect import engine
+from src.models.profile import Profile
+from src.schemas.profile import ProfileSchema, ProfileLoginSchema
 
-from utils.constants import (HTTP_200_ACCEPTED, HTTP_201_CREATED,
+from src.utils.constants import (
+    HTTP_200_ACCEPTED, HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND,
-     HTTP_422_UNPROCESSABLE_ENTITY
+    HTTP_422_UNPROCESSABLE_ENTITY
 )
 
 config = dotenv_values(".env")
@@ -52,7 +53,7 @@ class ProfileSignupView(MethodView):
             session.add(profile)
             session.commit()
             result = ProfileSchema().dump(session.get(Profile, profile.id))
-            return {'message': result}, HTTP_201_CREATED
+            return result, HTTP_201_CREATED
 
 
 class ProfileLoginView(MethodView):
@@ -70,14 +71,13 @@ class ProfileLoginView(MethodView):
         username, password = data['username'], data['password']
         with Session(engine) as session:
             profile = session.exec(select(Profile).where(
-                Profile.username == username
-                )).first()
+                Profile.username == username)).first()
 
             if profile:
                 if check_password_hash(profile.password, password):
                     token = jwt.encode({
                         'profile_id': profile.id,
-                        'exp' : datetime.utcnow() + timedelta(minutes = 30)
+                        'exp' : datetime.utcnow() + timedelta(minutes=30)
                     }, config.get('SECRET_KEY'), 'HS256')
                     return {'token': token}, HTTP_200_ACCEPTED
 

@@ -1,2 +1,2 @@
-from models.note import Note
-from models.profile import Profile
+from src.models.note import Note
+from src.models.profile import Profile
