@@ -10,7 +10,6 @@ class Config:
 
 
 class TestConfig(Config):
-    """Testing configuration options."""
     ENV_PREFIX = 'APP_'
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///memory.db'
