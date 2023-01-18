@@ -1,7 +1,8 @@
 import jwt
+from flask_jwt_extended import (
+    create_access_token, create_refresh_token, jwt_required, get_jwt_identity)
 
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
 from marshmallow import ValidationError
 from sqlmodel import Session, select
 from flask.views import MethodView
@@ -75,11 +76,24 @@ class ProfileLoginView(MethodView):
 
             if profile:
                 if check_password_hash(profile.password, password):
-                    token = jwt.encode({
-                        'profile_id': profile.id,
-                        'exp' : datetime.utcnow() + timedelta(minutes=30)
-                    }, config.get('SECRET_KEY'), 'HS256')
-                    return {'token': token}, HTTP_200_ACCEPTED
+                    # token = jwt.encode({
+                    #     'profile_id': profile.id,
+                    #     'exp' : datetime.utcnow() + timedelta(minutes=30)
+                    # }, config.get('SECRET_KEY'), 'HS256')
+                    access_token = create_access_token(identity=profile.id)
+                    refresh_token = create_refresh_token(profile.id)
+                    return {
+                        'access_token': access_token,
+                        'refresh_token': refresh_token}, HTTP_200_ACCEPTED
 
                 return {'message': 'passwords do not match'}, HTTP_403_FORBIDDEN
             return {'message': 'profile not found'}, HTTP_404_NOT_FOUND
+
+
+class TokenRefresh(MethodView):
+    @jwt_required()
+    def post(self):
+        # import pdb ; pdb.set_trace()
+        current_user = get_jwt_identity()
+        new_token = create_access_token(identity=current_user, fresh=False)
+        return {'access_token': new_token}, 200
