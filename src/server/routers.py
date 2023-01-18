@@ -1,5 +1,7 @@
 from src.services.hello import HelloWorld
-from src.services.authentication import ProfileLoginView, ProfileSignupView
+from src.services.authentication import (
+    ProfileLoginView, ProfileSignupView, TokenRefresh)
+
 from src.services.profile import ProfileMeView, ProfileListView, ProfileDetailsView
 from src.services.note import NoteListView, ProfileMeNotes
 
@@ -9,6 +11,7 @@ def register_endpoints(app):
 
     app.add_url_rule('/signup', view_func=ProfileSignupView.as_view(name='signup'))
     app.add_url_rule('/login', view_func=ProfileLoginView.as_view(name='login'))
+    app.add_url_rule('/refresh', view_func=TokenRefresh.as_view(name='refresh'))
 
     app.add_url_rule('/me', view_func=ProfileMeView.as_view(name='profile_me'))
     app.add_url_rule('/profile', view_func=ProfileListView.as_view(

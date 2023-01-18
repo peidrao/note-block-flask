@@ -7,14 +7,16 @@ from flask.views import MethodView
 from src.database.connect import engine
 from src.models import Note, Profile
 from src.schemas.note import NoteSchema
-from src.utils.auth import token_required
+# from src.utils.auth import token_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 from src.utils.constants import (
     HTTP_200_ACCEPTED, HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY)
 
 
 class NoteListView(MethodView):
-    @token_required
+    @jwt_required
     def post(self, _):
         json_data = request.get_json()
         if not json_data:
@@ -45,8 +47,9 @@ class NoteListView(MethodView):
 
 
 class ProfileMeNotes(MethodView):
-    @token_required
-    def get(self, request):
+    @jwt_required()
+    def get(self):
+        current_user = get_jwt_identity()
         with Session(engine) as session:
-            notes = session.exec(select(Note).where(Note.profile_id == self.id))
+            notes = session.exec(select(Note).where(Note.profile_id == current_user))
             return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED
