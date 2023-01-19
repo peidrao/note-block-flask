@@ -21,7 +21,7 @@ jobs:
       - name: "Create env file"
         run: |
           touch .env
-          echo FLASK_DEBUG=${{ secrets.FLASK_DEBUG }} >> .env
+          echo FLASK_DEBUG=test >> .env
           cat .env
       - name: Install dependencies
         run: |
