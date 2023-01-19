@@ -1,6 +1,5 @@
 import os
 import pytest
-os.environ['FLASK_DEBUG'] = 'test'
 
 from src.server.config import config
 from src.server.app import create_app
@@ -10,6 +9,11 @@ from dotenv import dotenv_values
 
 
 config_env = dotenv_values(".env")
+
+# def create_env_file():
+#     f = open('.env', 'w+')
+#     f.write("FLASK_DEBUG=test")
+#     f.close()
 
 
 @pytest.fixture(scope='session')
