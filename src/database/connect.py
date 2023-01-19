@@ -1,6 +1,7 @@
 from sqlmodel import create_engine, SQLModel
 from src.server.config import config
 
+
 engine = create_engine(config.SQLALCHEMY_DATABASE_URI, echo=True)
 
 
