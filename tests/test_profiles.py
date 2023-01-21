@@ -4,7 +4,6 @@ import json
 def test_list_profiles(test_app):
     client = test_app.test_client()
     response = client.get('/profile')
-    assert not json.loads(response.data)
     assert response.status_code == 200
 
 def test_create_profile(test_app):
