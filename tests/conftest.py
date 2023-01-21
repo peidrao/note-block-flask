@@ -10,11 +10,6 @@ from dotenv import dotenv_values
 
 config_env = dotenv_values(".env")
 
-# def create_env_file():
-#     f = open('.env', 'w+')
-#     f.write("FLASK_DEBUG=test")
-#     f.close()
-
 
 @pytest.fixture(scope='session')
 def test_app():
