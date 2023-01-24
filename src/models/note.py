@@ -9,4 +9,4 @@ class Note(SQLModel, table=True):
     is_active: bool = Field(default=True)
     created_at: datetime = Field(default=datetime.utcnow(), nullable=False)
 
-    profile_id: Optional[int] = Field(default=None, foreign_key='profile.id')
+    profile_id: Optional[int] = Field(default=None, foreign_key="profile.id")

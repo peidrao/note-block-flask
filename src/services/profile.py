@@ -9,28 +9,33 @@ from src.models.profile import Profile
 from src.schemas.profile import ProfileSchema
 from src.utils.auth import token_required
 from src.utils.constants import (
-    HTTP_200_ACCEPTED, HTTP_201_CREATED, HTTP_204_NO_CONTENT,
-    HTTP_400_BAD_REQUEST, HTTP_422_UNPROCESSABLE_ENTITY)
+    HTTP_200_ACCEPTED,
+    HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
+    HTTP_400_BAD_REQUEST,
+    HTTP_404_NOT_FOUND,
+    HTTP_422_UNPROCESSABLE_ENTITY,
+)
 
 
 class ProfileListView(MethodView):
     def post(self):
         json_data = request.get_json()
         if not json_data:
-            return {'message': 'No payload'}, HTTP_400_BAD_REQUEST
+            return {"message": "No payload"}, HTTP_400_BAD_REQUEST
 
         try:
             data = ProfileSchema().load(json_data)
         except ValidationError as err:
             return err.messages, HTTP_422_UNPROCESSABLE_ENTITY
 
-        name = data['name']
+        name = data["name"]
         with Session(engine) as session:
             profile = Profile(name=name)
             session.add(profile)
             session.commit()
             result = ProfileSchema().dump(session.get(Profile, profile.id))
-            return {'message': result}, HTTP_201_CREATED
+            return {"message": result}, HTTP_201_CREATED
 
     # @token_required
     def get(self):
@@ -40,7 +45,6 @@ class ProfileListView(MethodView):
 
 
 class ProfileDetailsView(MethodView):
-
     def get(self, profile_id):
         with Session(engine) as session:
             profile = session.get(Profile, profile_id)
@@ -56,14 +60,14 @@ class ProfileDetailsView(MethodView):
     def put(self, profile_id):
         json_data = request.get_json()
         if not json_data:
-            return {'message': 'No payload'}, HTTP_400_BAD_REQUEST
+            return {"message": "No payload"}, HTTP_400_BAD_REQUEST
 
         try:
             data = ProfileSchema().load(json_data)
         except ValidationError as err:
             return err.messages, HTTP_422_UNPROCESSABLE_ENTITY
 
-        name = data['name']
+        name = data["name"]
         with Session(engine) as session:
             profile = session.get(Profile, profile_id)
             profile.name = name
@@ -78,3 +82,19 @@ class ProfileMeView(MethodView):
         with Session(engine) as session:
             result = ProfileSchema().dump(session.get(Profile, self.id))
             return result, HTTP_200_ACCEPTED
+
+
+class ProfileUpdatePasswordView(MethodView):
+    @token_required
+    def post(self):
+        json_data = request.get_json()
+        if not json_data:
+            return {"message": "No password"}, HTTP_400_BAD_REQUEST
+
+        with Session(engine) as session:
+            profile = session.get(Profile, self.id)
+            if profile:
+                profile.commit()
+                return {"message": "Password update"}, HTTP_200_ACCEPTED
+
+        return {"message": "Profile not found"}, HTTP_404_NOT_FOUND
