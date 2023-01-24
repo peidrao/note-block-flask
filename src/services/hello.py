@@ -9,4 +9,4 @@ class HelloWorld(MethodView):
 
     def get(self):
         # result = tasks.add_together.delay(1, 2)
-        return jsonify({'hello': 'world'}), HTTP_200_ACCEPTED
+        return jsonify({"hello": "world"}), HTTP_200_ACCEPTED

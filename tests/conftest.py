@@ -17,7 +17,7 @@ from dotenv import dotenv_values
 config_env = dotenv_values(".env")
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def test_app():
     app = create_app()
     app.config.from_object(config)
@@ -31,10 +31,10 @@ def create_user():
     with Session(engine) as session:
 
         profile = Profile(
-            username='test',
-            password=generate_password_hash('123'),
-            name='Test',
-            email='test@test.com'
+            username="test",
+            password=generate_password_hash("123"),
+            name="Test",
+            email="test@test.com",
         )
 
         session.add(profile)
@@ -44,4 +44,4 @@ def create_user():
 
 def pytest_sessionfinish(session, exitstatus):
     drop_db_and_tables()
-    os.remove('memory.db')
+    os.remove("memory.db")

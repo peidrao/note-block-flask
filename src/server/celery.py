@@ -3,7 +3,7 @@ import time
 from celery import Celery
 
 
-celery = Celery(__name__, include=['src.tasks.tasks'])
+celery = Celery(__name__, include=["src.tasks.tasks"])
 celery.conf.broker_url = "redis://localhost:6378"
 celery.conf.result_backend = "redis://localhost:6378"
 
