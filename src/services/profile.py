@@ -3,7 +3,7 @@ from flask.views import MethodView
 from marshmallow import ValidationError
 from sqlmodel import Session, select
 from flask import request
-
+from werkzeug.security import generate_password_hash
 from src.database.connect import engine
 from src.models.profile import Profile
 from src.schemas.profile import ProfileSchema
@@ -86,15 +86,17 @@ class ProfileMeView(MethodView):
 
 class ProfileUpdatePasswordView(MethodView):
     @token_required
-    def post(self):
+    def post(self, _):
         json_data = request.get_json()
         if not json_data:
             return {"message": "No password"}, HTTP_400_BAD_REQUEST
+        password = json_data.get('password')
 
         with Session(engine) as session:
             profile = session.get(Profile, self.id)
             if profile:
-                profile.commit()
+                profile.password = generate_password_hash(password)
+                session.commit()
                 return {"message": "Password update"}, HTTP_200_ACCEPTED
 
         return {"message": "Profile not found"}, HTTP_404_NOT_FOUND
