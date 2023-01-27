@@ -1,12 +1,11 @@
 import jwt
 
-from sqlmodel import Session
 from functools import wraps
 from flask import request
 from dotenv import dotenv_values
+from src.database.database import Session
 
 from src.models.profile import Profile
-from src.database.connect import engine
 from src.utils.constants import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 
 config = dotenv_values(".env")
@@ -25,8 +24,9 @@ def token_required(f):
         try:
             data = jwt.decode(token, config.get("SECRET_KEY"), "HS256")
 
-            with Session(engine) as session:
-                profile = session.get(Profile, data.get('sub'))
+            with Session() as session:
+                profile = session.query(Profile).filter(
+                    Profile.id == data.get('sub')).one_or_none()
 
         except (
             jwt.exceptions.DecodeError,

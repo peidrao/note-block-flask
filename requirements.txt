@@ -48,7 +48,6 @@ ruff==0.0.220
 six==1.16.0
 SQLAlchemy==1.4.41
 sqlalchemy2-stubs==0.0.2a31
-sqlmodel==0.0.8
 tomli==2.0.1
 typing-extensions==4.4.0
 vine==5.0.0

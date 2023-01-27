@@ -1,12 +1,18 @@
-from typing import Optional
+from sqlalchemy import ForeignKey, Column, Integer, String, DateTime, Boolean
+from sqlalchemy.orm import relationship, backref
+
 from datetime import datetime
-from sqlmodel import Field, SQLModel
+
+from src.database.database import Base
 
 
-class Note(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    text: str
-    is_active: bool = Field(default=True)
-    created_at: datetime = Field(default=datetime.utcnow(), nullable=False)
+class Note(Base):
+    __tablename__ = 'notes'
 
-    profile_id: Optional[int] = Field(default=None, foreign_key="profile.id")
+    id = Column(Integer, primary_key=True)
+    text = Column(String(250))
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    profile_id = Column(Integer, ForeignKey("profiles.id"))
+    profile = relationship("Profile", backref=backref("profiles", uselist=False))

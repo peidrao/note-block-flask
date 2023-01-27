@@ -1,20 +1,17 @@
-import jwt
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
     jwt_required,
     get_jwt_identity,
 )
-
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import ValidationError
-from sqlmodel import Session, select
 from flask.views import MethodView
+from sqlalchemy import select
 from flask import request
 from dotenv import dotenv_values
+from src.database import Session
 
-
-from src.database.connect import engine
 from src.models.profile import Profile
 from src.schemas.profile import ProfileSchema, ProfileLoginSchema
 
@@ -44,14 +41,10 @@ class ProfileSignupView(MethodView):
         name = data["name"]
         username, email, password = data["username"], data["email"], data["password"]
 
-        with Session(engine) as session:
-            exists = session.exec(
-                select(Profile).where(
-                    Profile.email == email, Profile.username == username
-                )
-            )
+        with Session() as session:
+            query = session.query(Profile).filter(Profile.email == email)
 
-            if exists.first():
+            if session.query(query.exists()).scalar():
                 return {"message": "Profile already exists"}, HTTP_400_BAD_REQUEST
 
             profile = Profile(
@@ -78,10 +71,9 @@ class ProfileLoginView(MethodView):
             return err.messages, HTTP_422_UNPROCESSABLE_ENTITY
 
         username, password = data["username"], data["password"]
-        with Session(engine) as session:
-            profile = session.exec(
-                select(Profile).where(Profile.username == username)
-            ).first()
+        with Session() as session:
+            profile = session.query(Profile).filter(
+                Profile.username == username).one_or_none()
 
             if profile:
                 if check_password_hash(profile.password, password):
