@@ -1,10 +1,7 @@
-# from flask_restful import Resource
 from marshmallow import ValidationError
-from sqlmodel import Session, select
 from flask import request
 from flask.views import MethodView
-
-from src.database.connect import engine
+from src.database import Session
 from src.models import Note, Profile
 from src.schemas.note import NoteSchema
 
@@ -34,9 +31,10 @@ class NoteListView(MethodView):
 
         text = data["text"]
 
-        with Session(engine) as session:
+        with Session() as session:
+            profile = session.query(Profile).filter(
+                Profile.id == profile_id).one_or_none()
 
-            profile = session.get(Profile, profile_id)
             if profile:
                 note = Note(text=text, profile_id=profile.id)
                 session.add(note)
@@ -46,8 +44,8 @@ class NoteListView(MethodView):
             return {"message": "Profile not found"}, HTTP_404_NOT_FOUND
 
     def get(self):
-        with Session(engine) as session:
-            notes = session.exec(select(Note)).all()
+        with Session() as session:
+            notes = session.query(Note).all()
             return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED
 
 
@@ -55,6 +53,6 @@ class ProfileMeNotes(MethodView):
     @jwt_required()
     def get(self):
         current_user = get_jwt_identity()
-        with Session(engine) as session:
-            notes = session.exec(select(Note).where(Note.profile_id == current_user))
+        with Session() as session:
+            notes = session.query(Note).filter(Note.profile_id == current_user)
             return NoteSchema(many=True).dump(notes), HTTP_200_ACCEPTED
