@@ -1,10 +1,13 @@
 import json
 
 
-def test_list_profiles(test_app):
+def test_list_profiles(test_app, token):
     client = test_app.test_client()
-    response = client.get("/profile")
+    response = client.get("/profile", headers=token)
+    res = json.loads(response.data)
+
     assert response.status_code == 200
+    assert res
 
 
 def test_create_profile(test_app):

@@ -1,13 +1,11 @@
 import os
 import pytest
-from sqlmodel import Session
+import json
 from src.models.profile import Profile
-from sqlmodel import SQLModel
+from src.database import Session, init_db, engine, Base
 from src.server.config import config
 from src.server.app import create_app
-from src.database.connect import engine
 from werkzeug.security import generate_password_hash
-# from src.models import Note, Profile
 
 from dotenv import dotenv_values
 
@@ -20,25 +18,38 @@ def test_app():
     app = create_app()
     app.config.from_object(config)
     with app.app_context():
-        SQLModel.metadata.create_all(engine)
+        init_db()
         yield app
 
 
 @pytest.fixture()
 def create_user():
-    with Session(engine) as session:
+    with Session() as session:
         profile = Profile(
             username="test",
             password=generate_password_hash("123"),
             name="Test",
             email="test@test.com",
         )
-
         session.add(profile)
         session.commit()
         yield profile
 
 
+@pytest.fixture(scope="session")
+def token(test_app):
+    client = test_app.test_client()
+    payload = {"username": "test", "password": "123"}
+    response = client.post(
+        "/login",
+        data=json.dumps(payload),
+        headers={"Content-Type": "application/json"}
+    )
+    token = json.loads(response.data)['access_token']
+    headers = {'Authorization': f'Bearer {token}' }
+    yield headers
+
+
 def pytest_sessionfinish(session, exitstatus):
-    SQLModel.metadata.drop_all(engine)
+    Base.metadata.create_all(bind=engine)
     os.remove("memory.db")
