@@ -9,7 +9,6 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     JWTManager(app)
-    # jwt.init_app(app)
     app.config["CORS_HEADERS"] = "Content-Type"
     app.config.from_object(config)
     register_endpoints(app)

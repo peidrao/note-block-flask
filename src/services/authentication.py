@@ -13,17 +13,9 @@ from dotenv import dotenv_values
 from src.database import Session
 
 from src.models.profile import Profile
-from src.schemas.profile import ProfileSchema, ProfileLoginSchema
+from src.schemas.profile import ProfileCreateSchema, ProfileLoginSchema, ProfileSchema
 
-from src.utils.constants import (
-    HTTP_200_ACCEPTED,
-    HTTP_201_CREATED,
-    HTTP_400_BAD_REQUEST,
-    HTTP_403_FORBIDDEN,
-    HTTP_404_NOT_FOUND,
-    HTTP_422_UNPROCESSABLE_ENTITY,
-)
-
+from src.utils import status
 config = dotenv_values(".env")
 
 
@@ -31,12 +23,12 @@ class ProfileSignupView(MethodView):
     def post(self):
         json_data = request.get_json()
         if not json_data:
-            return {"message": "No payload"}, HTTP_400_BAD_REQUEST
+            return {"message": "No payload"}, status.HTTP_400_BAD_REQUEST
 
         try:
-            data = ProfileSchema().load(json_data)
+            data = ProfileCreateSchema().load(json_data)
         except ValidationError as err:
-            return err.messages, HTTP_422_UNPROCESSABLE_ENTITY
+            return err.messages, status.HTTP_422_UNPROCESSABLE_ENTITY
 
         name = data["name"]
         username, email, password = data["username"], data["email"], data["password"]
@@ -45,7 +37,8 @@ class ProfileSignupView(MethodView):
             query = session.query(Profile).filter(Profile.email == email)
 
             if session.query(query.exists()).scalar():
-                return {"message": "Profile already exists"}, HTTP_400_BAD_REQUEST
+                return {"message": "Profile already exists"}, \
+                    status.HTTP_400_BAD_REQUEST
 
             profile = Profile(
                 name=name,
@@ -56,19 +49,19 @@ class ProfileSignupView(MethodView):
             session.add(profile)
             session.commit()
             result = ProfileSchema().dump(session.get(Profile, profile.id))
-            return result, HTTP_201_CREATED
+            return result, status.HTTP_201_CREATED
 
 
 class ProfileLoginView(MethodView):
     def post(self):
         json_data = request.get_json()
         if not json_data:
-            return {"message": "No payload"}, HTTP_400_BAD_REQUEST
+            return {"message": "No payload"}, status.HTTP_400_BAD_REQUEST
 
         try:
             data = ProfileLoginSchema().load(json_data)
         except ValidationError as err:
-            return err.messages, HTTP_422_UNPROCESSABLE_ENTITY
+            return err.messages, status.HTTP_422_UNPROCESSABLE_ENTITY
 
         username, password = data["username"], data["password"]
         with Session() as session:
@@ -82,10 +75,10 @@ class ProfileLoginView(MethodView):
                     return {
                         "access_token": access_token,
                         "refresh_token": refresh_token,
-                    }, HTTP_200_ACCEPTED
+                    }, status.HTTP_200_ACCEPTED
 
-                return {"message": "passwords do not match"}, HTTP_403_FORBIDDEN
-            return {"message": "profile not found"}, HTTP_404_NOT_FOUND
+                return {"message": "passwords do not match"}, status.HTTP_403_FORBIDDEN
+            return {"message": "profile not found"}, status.HTTP_404_NOT_FOUND
 
 
 class TokenRefresh(MethodView):

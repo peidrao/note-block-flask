@@ -6,7 +6,7 @@ from dotenv import dotenv_values
 from src.database.database import Session
 
 from src.models.profile import Profile
-from src.utils.constants import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
+from src.utils import status
 
 config = dotenv_values(".env")
 
@@ -19,7 +19,7 @@ def token_required(f):
             token = request.headers["Authorization"]
             token = token.split(" ")[1]
         if not token:
-            return {"message": "Token is missing"}, HTTP_401_UNAUTHORIZED
+            return {"message": "Token is missing"}, status.HTTP_401_UNAUTHORIZED
 
         try:
             data = jwt.decode(token, config.get("SECRET_KEY"), "HS256")
@@ -32,7 +32,7 @@ def token_required(f):
             jwt.exceptions.DecodeError,
             jwt.exceptions.ExpiredSignatureError,
         ) as error:
-            return {"message": error.args[0]}, HTTP_400_BAD_REQUEST
+            return {"message": error.args[0]}, status.HTTP_400_BAD_REQUEST
         return f(profile, *args, **kwargs)
 
     return decorated
