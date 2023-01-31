@@ -22,7 +22,7 @@ def test_app():
         yield app
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def create_user():
     with Session() as session:
         profile = Profile(
