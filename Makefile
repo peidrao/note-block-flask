@@ -1,6 +1,3 @@
-# run:
-# 	poetry run python3 src/app.py
-
 run:
 	python3 -m manage
 
@@ -9,6 +6,3 @@ test:
 
 celery:
 	celery -A src.server.celeryu worker --loglevel=DEBUG
-
-db:
-	python3 -m db_init
