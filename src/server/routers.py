@@ -1,17 +1,14 @@
 from src.services.hello import HelloWorld
 from src.services.authentication import (
-    ProfileLoginView,
-    ProfileSignupView,
-    TokenRefresh,
+    ProfileLoginView, ProfileSignupView, TokenRefresh,
 )
 
 from src.services.profile import (
-    ProfileMeView,
-    ProfileListView,
-    ProfileDetailsView,
-    ProfileUpdatePasswordView,
+    ProfileMeView, ProfileListView, ProfileDetailsView, ProfileUpdatePasswordView,
 )
-from src.services.note import NoteListView, ProfileMeNotes
+from src.services.note import (
+    NoteDetailsView, NoteListView, NotesTrashView, ProfileMeNotes
+)
 
 
 def register_endpoints(app):
@@ -35,3 +32,11 @@ def register_endpoints(app):
 
     app.add_url_rule("/notes", view_func=NoteListView.as_view(name="notes_list"))
     app.add_url_rule("/me/notes", view_func=ProfileMeNotes.as_view(name="notes_me"))
+
+    app.add_url_rule(
+        "/notes/<int:note_id>",
+        view_func=NoteDetailsView.as_view(name="notes_detail"))
+
+    app.add_url_rule(
+        "/notes/trash/",
+        view_func=NotesTrashView.as_view(name="note_trash"))

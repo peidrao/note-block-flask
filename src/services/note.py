@@ -9,6 +9,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from src.utils import status
 
+
 class NoteListView(MethodView):
     @jwt_required()
     def post(self):
@@ -40,7 +41,30 @@ class NoteListView(MethodView):
 
     def get(self):
         with Session() as session:
-            notes = session.query(Note).all()
+            notes = session.query(Note).filter(Note.is_active)
+            return NoteSchema(many=True).dump(notes), status.HTTP_200_ACCEPTED
+
+
+class NoteDetailsView(MethodView):
+    @jwt_required()
+    def post(self, note_id):
+        with Session() as session:
+            note = session.query(Note).filter(Note.id == note_id).one_or_none()
+            if note:
+                note.is_active = False
+                session.commit()
+                return NoteSchema().dump(note), status.HTTP_200_ACCEPTED
+
+            return {'message': 'Note not found'}, status.HTTP_404_NOT_FOUND
+
+
+class NotesTrashView(MethodView):
+    @jwt_required()
+    def get(self):
+        current_user = get_jwt_identity()
+        with Session() as session:
+            notes = session.query(Note).filter(
+                Note.profile_id == current_user, ~Note.is_active)
             return NoteSchema(many=True).dump(notes), status.HTTP_200_ACCEPTED
 
 
