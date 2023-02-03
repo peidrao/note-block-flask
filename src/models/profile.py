@@ -1,6 +1,5 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
-
 from src.database.database import Base
 
 
@@ -14,3 +13,4 @@ class Profile(Base):
     password = Column(String(250))
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
