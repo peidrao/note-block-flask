@@ -7,7 +7,6 @@ from flask_jwt_extended import (
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import ValidationError
 from flask.views import MethodView
-from sqlalchemy import select
 from flask import request
 from dotenv import dotenv_values
 from src.database import Session
@@ -58,10 +57,12 @@ class ProfileLoginView(MethodView):
         if not json_data:
             return {"message": "No payload"}, status.HTTP_400_BAD_REQUEST
 
+
         try:
             data = ProfileLoginSchema().load(json_data)
         except ValidationError as err:
             return err.messages, status.HTTP_422_UNPROCESSABLE_ENTITY
+        import pdb;pdb.set_trace()
 
         username, password = data["username"], data["password"]
         with Session() as session:
