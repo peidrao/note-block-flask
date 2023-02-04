@@ -1,0 +1,4 @@
+[MASTER]
+disable=
+    C0114, C0111,
+init-hook='import sys; sys.path.append(".")'
