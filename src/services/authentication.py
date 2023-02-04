@@ -15,6 +15,7 @@ from src.models.profile import Profile
 from src.schemas.profile import ProfileCreateSchema, ProfileLoginSchema, ProfileSchema
 
 from src.utils import status
+
 config = dotenv_values(".env")
 
 
@@ -36,8 +37,9 @@ class ProfileSignupView(MethodView):
             query = session.query(Profile).filter(Profile.email == email)
 
             if session.query(query.exists()).scalar():
-                return {"message": "Profile already exists"}, \
-                    status.HTTP_400_BAD_REQUEST
+                return {
+                    "message": "Profile already exists"
+                }, status.HTTP_400_BAD_REQUEST
 
             profile = Profile(
                 name=name,
@@ -57,17 +59,18 @@ class ProfileLoginView(MethodView):
         if not json_data:
             return {"message": "No payload"}, status.HTTP_400_BAD_REQUEST
 
-
         try:
             data = ProfileLoginSchema().load(json_data)
         except ValidationError as err:
             return err.messages, status.HTTP_422_UNPROCESSABLE_ENTITY
-        import pdb;pdb.set_trace()
 
         username, password = data["username"], data["password"]
         with Session() as session:
-            profile = session.query(Profile).filter(
-                Profile.username == username).one_or_none()
+            profile = (
+                session.query(Profile)
+                .filter(Profile.username == username)
+                .one_or_none()
+            )
 
             if profile:
                 if check_password_hash(profile.password, password):

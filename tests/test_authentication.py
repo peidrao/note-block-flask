@@ -15,9 +15,7 @@ def test_login_error_password(test_app, create_user):
     client = test_app.test_client()
     payload = {"username": "test", "password": "12"}
     response = client.post(
-            '/login', 
-            data=json.dumps(payload), 
-            headers={'Content-Type': 'application/json'})
-    
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+        "/login", data=json.dumps(payload), headers={"Content-Type": "application/json"}
+    )
 
+    assert response.status_code == status.HTTP_403_FORBIDDEN
