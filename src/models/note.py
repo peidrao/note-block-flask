@@ -1,13 +1,12 @@
+from datetime import datetime
 from sqlalchemy import ForeignKey, Column, Integer, String, DateTime, Boolean
 from sqlalchemy.orm import relationship, backref
-
-from datetime import datetime
 
 from src.database.database import Base
 
 
 class Tag(Base):
-    __tablename__ = 'tags'
+    __tablename__ = "tags"
 
     id = Column(Integer, primary_key=True)
     tag = Column(String(20))
@@ -19,7 +18,7 @@ class Tag(Base):
 
 
 class Note(Base):
-    __tablename__ = 'notes'
+    __tablename__ = "notes"
 
     id = Column(Integer, primary_key=True)
     text = Column(String(250))
