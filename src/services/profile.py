@@ -1,7 +1,7 @@
+from flask import request
 from flask.views import MethodView
 
 from marshmallow import ValidationError
-from flask import request
 from werkzeug.security import generate_password_hash
 from src.database import Session
 from src.models import Profile
