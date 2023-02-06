@@ -25,8 +25,11 @@ def token_required(f):
             data = jwt.decode(token, config.get("SECRET_KEY"), "HS256")
 
             with Session() as session:
-                profile = session.query(Profile).filter(
-                    Profile.id == data.get('sub')).one_or_none()
+                profile = (
+                    session.query(Profile)
+                    .filter(Profile.id == data.get("sub"))
+                    .one_or_none()
+                )
 
         except (
             jwt.exceptions.DecodeError,
