@@ -21,21 +21,23 @@ class NoteListView(MethodView):
         try:
             data = NoteSchema().load(json_data)
         except ValidationError as err:
-            return {'error': err.messages}, status.HTTP_422_UNPROCESSABLE_ENTITY
+            return {"error": err.messages}, status.HTTP_422_UNPROCESSABLE_ENTITY
 
         text = data["text"]
 
         with Session() as session:
-            profile = session.query(Profile).filter(
-                Profile.id == profile_id).one_or_none()
+            profile = (
+                session.query(Profile).filter(Profile.id == profile_id).one_or_none()
+            )
 
             if profile:
                 note = Note(text=text, profile_id=profile.id)
                 session.add(note)
                 session.commit()
-                return NoteSchema().dump(
-                    session.get(Note, note.id)
-                ), status.HTTP_201_CREATED
+                return (
+                    NoteSchema().dump(session.get(Note, note.id)),
+                    status.HTTP_201_CREATED,
+                )
 
             return {"message": "Profile not found"}, status.HTTP_404_NOT_FOUND
 
@@ -55,7 +57,7 @@ class NoteDetailsView(MethodView):
                 session.commit()
                 return NoteSchema().dump(note), status.HTTP_200_ACCEPTED
 
-            return {'message': 'Note not found'}, status.HTTP_404_NOT_FOUND
+            return {"message": "Note not found"}, status.HTTP_404_NOT_FOUND
 
 
 class NotesTrashView(MethodView):
@@ -64,7 +66,8 @@ class NotesTrashView(MethodView):
         current_user = get_jwt_identity()
         with Session() as session:
             notes = session.query(Note).filter(
-                Note.profile_id == current_user, ~Note.is_active)
+                Note.profile_id == current_user, ~Note.is_active
+            )
             return NoteSchema(many=True).dump(notes), status.HTTP_200_ACCEPTED
 
 

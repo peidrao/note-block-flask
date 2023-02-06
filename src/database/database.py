@@ -13,4 +13,5 @@ Base.query = Session.query_property()
 def init_db():
     from src.models.profile import Profile
     from src.models.note import Note, Tag
+
     Base.metadata.create_all(bind=engine)

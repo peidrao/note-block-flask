@@ -15,7 +15,7 @@ def test_list_notes(test_app, create_user):
 
     with Session() as session:
         for nn in range(0, 5):
-            note = Note(text=f'{nn}', profile_id=create_user.id)
+            note = Note(text=f"{nn}", profile_id=create_user.id)
             session.add(note)
             session.commit()
 
@@ -32,8 +32,8 @@ def test_list_notes_in_trash(test_app, create_user, token):
 
     with Session() as session:
         for nn in range(0, 4):
-            print('OI AMIGO: ', nn)
-            note = Note(text=f'{nn}', profile_id=create_user.id, is_active=False)
+            print("OI AMIGO: ", nn)
+            note = Note(text=f"{nn}", profile_id=create_user.id, is_active=False)
             session.add(note)
             session.commit()
 

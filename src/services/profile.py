@@ -22,8 +22,9 @@ class ProfileListView(MethodView):
 class ProfileDetailsView(MethodView):
     def get(self, profile_id):
         with Session() as session:
-            profile = session.query(Profile).filter(
-                Profile.id == profile_id).one_or_none()
+            profile = (
+                session.query(Profile).filter(Profile.id == profile_id).one_or_none()
+            )
             return ProfileSchema().dump(profile), status.HTTP_200_ACCEPTED
 
     def delete(self, profile_id):
@@ -65,7 +66,7 @@ class ProfileUpdatePasswordView(MethodView):
         json_data = request.get_json()
         if not json_data:
             return {"message": "No password"}, status.HTTP_400_BAD_REQUEST
-        password = json_data.get('password')
+        password = json_data.get("password")
 
         with Session() as session:
             profile = session.query(Profile).filter(Profile.id == self.id).one_or_none()

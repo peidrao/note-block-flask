@@ -41,12 +41,10 @@ def token(test_app):
     client = test_app.test_client()
     payload = {"username": "test", "password": "123"}
     response = client.post(
-        "/login",
-        data=json.dumps(payload),
-        headers={"Content-Type": "application/json"}
+        "/login", data=json.dumps(payload), headers={"Content-Type": "application/json"}
     )
-    token = json.loads(response.data)['access_token']
-    headers = {'Authorization': f'Bearer {token}' }
+    token = json.loads(response.data)["access_token"]
+    headers = {"Authorization": f"Bearer {token}"}
     yield headers
 
 
