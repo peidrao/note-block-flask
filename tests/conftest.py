@@ -38,13 +38,12 @@ def create_user():
 
 @pytest.fixture(scope="session")
 def token(test_app):
+    headers = {"Content-Type": "application/json"}
     client = test_app.test_client()
     payload = {"username": "test", "password": "123"}
-    response = client.post(
-        "/login", data=json.dumps(payload), headers={"Content-Type": "application/json"}
-    )
+    response = client.post("/login", data=json.dumps(payload), headers=headers)
     token = json.loads(response.data)["access_token"]
-    headers = {"Authorization": f"Bearer {token}"}
+    headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
     yield headers
 
 

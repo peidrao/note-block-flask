@@ -42,3 +42,25 @@ def test_list_notes_in_trash(test_app, create_user, token):
     assert res
     assert len(res) == 4
     assert response.status_code == 200
+
+
+def test_create_note(test_app, token):
+    client = test_app.test_client()
+    payload = {"text": "new note"}
+
+    response = client.post("/notes", data=json.dumps(payload), headers=token)
+    data = json.loads(response.data)
+    assert data
+    assert response.status_code == 201
+    assert data["text"] == "new note"
+    assert data["is_active"]
+
+
+def test_create_note_no_payload(test_app, token):
+    client = test_app.test_client()
+
+    response = client.post("/notes", data=json.dumps({}), headers=token)
+    data = json.loads(response.data)
+
+    assert data
+    assert response.status_code == 400
