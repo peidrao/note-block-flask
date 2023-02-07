@@ -5,7 +5,6 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from src.database import Session
 from src.schemas.tag import TagSchema
-from src.utils.auth import token_required
 from src.models import Tag
 
 from src.utils import status
