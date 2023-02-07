@@ -1,13 +1,13 @@
 import os
 import pytest
 import json
-from src.models.profile import Profile
+from dotenv import dotenv_values
+from werkzeug.security import generate_password_hash
+
+from src.models import Tag, Profile
 from src.database import Session, init_db, engine, Base
 from src.server.config import config
 from src.server.app import create_app
-from werkzeug.security import generate_password_hash
-
-from dotenv import dotenv_values
 
 
 config_env = dotenv_values(".env")
@@ -34,6 +34,18 @@ def create_user():
         session.add(profile)
         session.commit()
         yield profile
+
+
+@pytest.fixture(scope="session")
+def create_tag(create_user):
+    with Session() as session:
+        tag = Tag(
+            tag="shop",
+            profile_id=create_user.id,
+        )
+        session.add(tag)
+        session.commit()
+        yield tag
 
 
 @pytest.fixture(scope="session")

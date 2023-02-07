@@ -14,8 +14,8 @@ def test_list_notes(test_app, create_user):
     client = test_app.test_client()
 
     with Session() as session:
-        for nn in range(0, 5):
-            note = Note(text=f"{nn}", profile_id=create_user.id)
+        for index in range(0, 5):
+            note = Note(text=f"{index}", profile_id=create_user.id)
             session.add(note)
             session.commit()
 
@@ -53,6 +53,19 @@ def test_create_note(test_app, token):
     assert data
     assert response.status_code == 201
     assert data["text"] == "new note"
+    assert data["is_active"]
+
+
+def test_create_note_by_tag(test_app, token, create_user, create_tag):
+    client = test_app.test_client()
+    payload = {"text": "new note", "tag_id": create_tag.id}
+
+    response = client.post("/notes", data=json.dumps(payload), headers=token)
+    data = json.loads(response.data)
+    assert data
+    assert response.status_code == 201
+    assert data["text"] == "new note"
+    assert data["tag_id"]
     assert data["is_active"]
 
 

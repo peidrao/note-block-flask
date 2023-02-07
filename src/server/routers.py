@@ -14,6 +14,7 @@ from src.services.profile import (
 from src.services.note import (
     NoteDetailsView,
     NoteListView,
+    NotesByTagView,
     NotesTrashView,
     ProfileMeNotes,
 )
@@ -30,17 +31,20 @@ def register_endpoints(app):
     app.add_url_rule("/me", view_func=ProfileMeView.as_view(name="profile_me"))
     app.add_url_rule("/profile", view_func=ProfileListView.as_view(name="profile_list"))
     app.add_url_rule(
+        "/profile/<int:profile_id>",
+        view_func=ProfileDetailsView.as_view(name="profile_details"),
+    )
+    app.add_url_rule(
         "/profile/update_password",
         view_func=ProfileUpdatePasswordView.as_view(name="profile_update_password"),
     )
 
-    app.add_url_rule(
-        "/profile/<int:profile_id>",
-        view_func=ProfileDetailsView.as_view(name="profile_details"),
-    )
-
     app.add_url_rule("/notes", view_func=NoteListView.as_view(name="notes_list"))
     app.add_url_rule("/me/notes", view_func=ProfileMeNotes.as_view(name="notes_me"))
+    app.add_url_rule(
+        "/notes/tags/<int:tag_id>",
+        view_func=NotesByTagView.as_view(name="notes_by_tags"),
+    )
     app.add_url_rule("/tags", view_func=TagsListView.as_view(name="tags_list"))
     app.add_url_rule(
         "/tag/<int:tag_id>", view_func=TagDetailsView.as_view(name="tags_detail")

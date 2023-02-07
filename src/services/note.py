@@ -1,12 +1,11 @@
 from marshmallow import ValidationError
 from flask import request
 from flask.views import MethodView
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 from src.database import Session
 from src.models import Note, Profile
 from src.schemas.note import NoteSchema
-
-from flask_jwt_extended import jwt_required, get_jwt_identity
-
 from src.utils import status
 
 
@@ -23,15 +22,14 @@ class NoteListView(MethodView):
         except ValidationError as err:
             return {"error": err.messages}, status.HTTP_422_UNPROCESSABLE_ENTITY
 
-        text = data["text"]
-
+        text, tag_id = data["text"], data.get("tag_id")
         with Session() as session:
             profile = (
                 session.query(Profile).filter(Profile.id == profile_id).one_or_none()
             )
 
             if profile:
-                note = Note(text=text, profile_id=profile.id)
+                note = Note(text=text, profile_id=profile.id, tag_id=tag_id)
                 session.add(note)
                 session.commit()
                 return (
@@ -77,4 +75,15 @@ class ProfileMeNotes(MethodView):
         current_user = get_jwt_identity()
         with Session() as session:
             notes = session.query(Note).filter(Note.profile_id == current_user)
+            return NoteSchema(many=True).dump(notes), status.HTTP_200_ACCEPTED
+
+
+class NotesByTagView(MethodView):
+    @jwt_required()
+    def get(self, tag_id):
+        current_user = get_jwt_identity()
+        with Session() as session:
+            notes = session.query(Note).filter(
+                Note.profile_id == current_user, Note.tag_id == tag_id
+            )
             return NoteSchema(many=True).dump(notes), status.HTTP_200_ACCEPTED
