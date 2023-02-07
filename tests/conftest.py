@@ -1,6 +1,7 @@
 import os
 import pytest
 import json
+from src.models.note import Tag
 from src.models.profile import Profile
 from src.database import Session, init_db, engine, Base
 from src.server.config import config
@@ -34,6 +35,18 @@ def create_user():
         session.add(profile)
         session.commit()
         yield profile
+
+
+@pytest.fixture(scope="session")
+def create_tag(create_user):
+    with Session() as session:
+        tag = Tag(
+            tag="shop",
+            profile_id=create_user.id,
+        )
+        session.add(tag)
+        session.commit()
+        yield tag
 
 
 @pytest.fixture(scope="session")
