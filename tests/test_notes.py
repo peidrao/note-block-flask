@@ -111,7 +111,7 @@ def test_remove_note(test_app, token, create_user):
     data = json.loads(response.data)
 
     assert response.status_code == 200
-    assert not data['is_active']
+    assert not data["is_active"]
 
 
 def test_remove_note_not_found(test_app, token):
@@ -121,7 +121,7 @@ def test_remove_note_not_found(test_app, token):
     data = json.loads(response.data)
 
     assert response.status_code == 404
-    assert data['message'] == 'Note not found'
+    assert data["message"] == "Note not found"
 
 
 def test_list_notes_by_current_user(test_app, token):
@@ -129,10 +129,9 @@ def test_list_notes_by_current_user(test_app, token):
 
     response = client.get("/me/notes", headers=token)
     data = json.loads(response.data)
-    
+
     assert response.status_code == 200
     assert len(data) == 12
-    
 
 
 def test_list_notes_by_tags(test_app, create_user, token):
@@ -140,17 +139,22 @@ def test_list_notes_by_tags(test_app, create_user, token):
     tag_id = None
 
     with Session() as session:
-        tag = Tag(tag='ye', profile_id=create_user.id)
+        tag = Tag(tag="ye", profile_id=create_user.id)
         session.add(tag)
         session.commit()
         tag_id = tag.id
         for index in range(0, 6):
-            note = Note(text=f"{index}", tag_id=tag_id, profile_id=create_user.id, is_active=False)
+            note = Note(
+                text=f"{index}",
+                tag_id=tag_id,
+                profile_id=create_user.id,
+                is_active=False,
+            )
             session.add(note)
             session.commit()
 
     response = client.get(f"/notes/tags/{tag_id}", headers=token)
-    
+
     res = json.loads(response.data)
     assert response.status_code == 200
     assert res
