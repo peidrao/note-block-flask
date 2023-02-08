@@ -37,8 +37,6 @@ class NoteListView(MethodView):
                     status.HTTP_201_CREATED,
                 )
 
-            return {"message": "Profile not found"}, status.HTTP_404_NOT_FOUND
-
     def get(self):
         with Session() as session:
             notes = session.query(Note).filter(Note.is_active)

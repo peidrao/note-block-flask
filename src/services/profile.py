@@ -1,13 +1,14 @@
-from flask import request
-from flask.views import MethodView
-
 from marshmallow import ValidationError
 from werkzeug.security import generate_password_hash
+
+from flask import request
+from flask.views import MethodView
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 from src.database import Session
 from src.models import Profile
 from src.schemas.profile import ProfileSchema
 from src.utils.auth import token_required
-
 from src.utils import status
 
 
@@ -20,6 +21,7 @@ class ProfileListView(MethodView):
 
 
 class ProfileDetailsView(MethodView):
+    @jwt_required()
     def get(self, profile_id):
         with Session() as session:
             profile = (
@@ -27,11 +29,17 @@ class ProfileDetailsView(MethodView):
             )
             return ProfileSchema().dump(profile), status.HTTP_200_ACCEPTED
 
+    @jwt_required()
     def delete(self, profile_id):
+        current_user = get_jwt_identity()
+        if current_user != profile_id:
+            return {"message": "You don't have permission for this action"}, \
+                status.HTTP_401_UNAUTHORIZED
         with Session() as session:
             session.query(Profile).filter(Profile == profile_id).delete()
-            return status.HTTP_204_NO_CONTENT
+            return {}, status.HTTP_204_NO_CONTENT
 
+    @jwt_required()
     def put(self, profile_id):
         json_data = request.get_json()
         if not json_data:
