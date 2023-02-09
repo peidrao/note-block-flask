@@ -2,7 +2,6 @@ from flask import request
 from flask.views import MethodView
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-
 from src.database import Session
 from src.schemas.tag import TagSchema
 from src.models import Tag

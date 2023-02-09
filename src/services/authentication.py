@@ -9,11 +9,10 @@ from marshmallow import ValidationError
 from flask.views import MethodView
 from flask import request
 from dotenv import dotenv_values
-from src.database import Session
 
+from src.database import Session
 from src.models.profile import Profile
 from src.schemas.profile import ProfileCreateSchema, ProfileLoginSchema, ProfileSchema
-
 from src.utils import status
 
 config = dotenv_values(".env")
